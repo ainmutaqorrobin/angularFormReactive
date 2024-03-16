@@ -9,6 +9,7 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 export class AppComponent implements OnInit {
   genders = ['male', 'female'];
   hobbies = ['Fishing', 'Gaming', 'Reading', 'Jogging'];
+  invalidUsername = ['ainrobin', 'ainmutaqorrobin'];
   signupForm: FormGroup;
 
   //set up getter
@@ -19,7 +20,10 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.signupForm = new FormGroup({
       userData: new FormGroup({
-        username: new FormControl(null, [Validators.required]),
+        username: new FormControl(null, [
+          Validators.required,
+          this.checkInvalidUsernames.bind(this),
+        ]),
         email: new FormControl(null, [Validators.required, Validators.email]),
       }),
       gender: new FormControl('female'),
@@ -27,7 +31,17 @@ export class AppComponent implements OnInit {
     });
   }
 
+  onAddHobby() {
+    const control = new FormControl(null, Validators.required);
+    (<FormArray>this.signupForm.get('hobbies')).push(control);
+  }
+
   onSubmit() {
     console.log(this.signupForm.value);
+  }
+
+  checkInvalidUsernames(control: FormControl): { [s: string]: boolean } {
+    if (this.invalidUsername.includes(control.value))
+      return { 'Invalid username, please try another': true };
   }
 }

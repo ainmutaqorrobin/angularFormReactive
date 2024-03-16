@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +11,7 @@ export class AppComponent implements OnInit {
   genders = ['male', 'female'];
   hobbies = ['Fishing', 'Gaming', 'Reading', 'Jogging'];
   invalidUsername = ['ainrobin', 'ainmutaqorrobin'];
+  invalidEmail = 'ainmutaqorrobin@gmail.com';
   signupForm: FormGroup;
 
   //set up getter
@@ -24,7 +26,11 @@ export class AppComponent implements OnInit {
           Validators.required,
           this.checkInvalidUsernames.bind(this),
         ]),
-        email: new FormControl(null, [Validators.required, Validators.email]),
+        email: new FormControl(
+          null,
+          [Validators.required, Validators.email],
+          this.checkInvalidEmail.bind(this)
+        ),
       }),
       gender: new FormControl('female'),
       hobbies: new FormArray([], Validators.required),
@@ -43,5 +49,16 @@ export class AppComponent implements OnInit {
   checkInvalidUsernames(control: FormControl): { [s: string]: boolean } {
     if (this.invalidUsername.includes(control.value))
       return { 'Invalid username, please try another': true };
+  }
+
+  checkInvalidEmail(control: FormControl): Promise<any> | Observable<any> {
+    const promise = new Promise<any>((resolve, reject) => {
+      setTimeout(() => {
+        if (control.value === 'ainmutaqorrobin@gmail.com') {
+          resolve({ invalidEmail: true });
+        } else reject(null);
+      }, 3000);
+    });
+    return promise;
   }
 }

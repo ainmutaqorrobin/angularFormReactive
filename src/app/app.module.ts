@@ -1,8 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {
-  FormGroup,
-  FormGroupDirective,
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';

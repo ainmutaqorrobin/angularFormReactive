@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -18,7 +24,6 @@ export class AppComponent implements OnInit {
   get controls() {
     return (this.signupForm.get('hobbies') as FormArray).controls;
   }
-
   ngOnInit(): void {
     this.signupForm = new FormGroup({
       userData: new FormGroup({
@@ -35,6 +40,9 @@ export class AppComponent implements OnInit {
       gender: new FormControl('female'),
       hobbies: new FormArray([], Validators.required),
     });
+    this.signupForm.statusChanges.subscribe((value) => {
+      console.log(value);
+    });
   }
 
   onAddHobby() {
@@ -46,9 +54,11 @@ export class AppComponent implements OnInit {
     console.log(this.signupForm.value);
   }
 
-  checkInvalidUsernames(control: FormControl): { [s: string]: boolean } {
-    if (this.invalidUsername.includes(control.value))
-      return { 'Invalid username, please try another': true };
+  checkInvalidUsernames(control: FormControl): { [s: string]: boolean } | null {
+    if (this.invalidUsername.includes(control.value)) {
+      return { invalidUsername: true };
+    }
+    return null;
   }
 
   checkInvalidEmail(control: FormControl): Promise<any> | Observable<any> {
